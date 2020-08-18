@@ -2,7 +2,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.stats import chi2
 
-class DataClicksGenerator():
+
+class DataClicksGenerator:
     def __init__(self, p1, p2):
         self.p1 = p1
         self.p2 = p2
@@ -13,13 +14,21 @@ class DataClicksGenerator():
 
         return click1, click2
 
+
 def get_pvalue(T):
-    #det = np.linalg.det(T)
-    det = T[0,0]*T[1,1] - T[0,1]*T[1,0]
-    c2 = (float(det)**2 * T.sum() )/ T[0].sum() / T[1].sum() / T[:, 0].sum() / T[:, 1].sum()
+    # det = np.linalg.det(T)
+    det = T[0, 0] * T[1, 1] - T[0, 1] * T[1, 0]
+    c2 = (
+        (float(det) ** 2 * T.sum())
+        / T[0].sum()
+        / T[1].sum()
+        / T[:, 0].sum()
+        / T[:, 1].sum()
+    )
     p = 1 - chi2.cdf(x=c2, df=1)
 
     return p
+
 
 def run_experiment(p1, p2, N, alpha):
     """
@@ -27,7 +36,7 @@ def run_experiment(p1, p2, N, alpha):
     N: number of trials
     """
     data = DataClicksGenerator(p1, p2)
-    T = np.zeros((2,2)).astype(np.float32)
+    T = np.zeros((2, 2)).astype(np.float32)
     p_values = np.empty(N)
     for i in range(N):
         c1, c2 = data.next()
@@ -39,6 +48,7 @@ def run_experiment(p1, p2, N, alpha):
             p_values[i] = get_pvalue(T)
 
     return p_values
+
 
 experiments = 3
 N = 20000
@@ -54,5 +64,5 @@ f, ax = plt.subplots()
 for p_values in results:
     ax.plot(p_values)
 
-ax.plot(np.ones(N)*alpha)
+ax.plot(np.ones(N) * alpha)
 plt.show()

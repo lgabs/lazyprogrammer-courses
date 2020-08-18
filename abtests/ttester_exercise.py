@@ -8,5 +8,5 @@ b = df.query("advertisement_id == 'B'")["action"].values
 print("mean A: ", a.mean())
 print("mean B: ", b.mean())
 
-r = ttester.calculate_ttest_statistic(a,b, len(a))
+r = ttester.calculate_ttest_statistic(a, b, len(a))
 print(r)

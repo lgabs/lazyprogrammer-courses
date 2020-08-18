@@ -2,6 +2,7 @@
 from __future__ import print_function, division
 from future.utils import iteritems
 from builtins import range
+
 # Note: you may need to update your version of future
 # sudo pip install -U future
 
@@ -27,7 +28,9 @@ count_vectorizer = CountVectorizer(decode_error="ignore")
 X = count_vectorizer.fit_transform(df["data"])
 
 # separate train and test
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, random_state=42)
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.33, random_state=42
+)
 
 # time to model
 model = MultinomialNB()
@@ -37,14 +40,15 @@ print("test score: ", model.score(X_test, y_test))
 
 # visualize the data
 def visualize(label):
-  words = ''
-  for msg in df[df['label'] == label]['data']:
-    msg = msg.lower()
-    words += msg + ' '
-  wordcloud = WordCloud(width=600, height=400).generate(words)
-  plt.imshow(wordcloud)
-  plt.axis('off')
-  plt.show()
+    words = ""
+    for msg in df[df["label"] == label]["data"]:
+        msg = msg.lower()
+        words += msg + " "
+    wordcloud = WordCloud(width=600, height=400).generate(words)
+    plt.imshow(wordcloud)
+    plt.axis("off")
+    plt.show()
+
 
 # visualize('spam')
 # visualize('ham')

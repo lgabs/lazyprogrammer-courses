@@ -10,15 +10,19 @@ lemmatizer = WordNetLemmatizer()
 with open("stopwords.txt") as f:
     stopwords = set(w.rstrip for w in f)
 
-positive_reviews = BeautifulSoup(open("electronics/positive.review").read(), features="html5lib").findAll("review_text")
-negative_reviews = BeautifulSoup(open("electronics/negative.review").read(), features="html5lib").findAll("review_text")
+positive_reviews = BeautifulSoup(
+    open("electronics/positive.review").read(), features="html5lib"
+).findAll("review_text")
+negative_reviews = BeautifulSoup(
+    open("electronics/negative.review").read(), features="html5lib"
+).findAll("review_text")
 
 # lets balance the dataset because one group is much higher than the other
 np.random.shuffle(positive_reviews)
-positive_reviews = positive_reviews[:len(negative_reviews)]
+positive_reviews = positive_reviews[: len(negative_reviews)]
 
 
-def my_tokenizer(sentence:str):
+def my_tokenizer(sentence: str):
     s = sentence.lower()
     tokens = nltk.tokenize.word_tokenize(s)
     tokens = [t for t in tokens if len(t) > 2]
@@ -26,6 +30,7 @@ def my_tokenizer(sentence:str):
     tokens = [t for t in tokens if t not in stopwords]
 
     return tokens
+
 
 # now we need to create a global index for each word
 # we need to find the size of vocabulary
@@ -52,7 +57,7 @@ for review in negative_reviews:
             current_index += 1
 
 
-def tokens2vector(tokens:list, label):
+def tokens2vector(tokens: list, label):
     """
     simple way here to gather both vector and label for later usage
     """
@@ -61,10 +66,11 @@ def tokens2vector(tokens:list, label):
     for t in tokens:
         i = word_index_map[t]
         x[i] += 1
-    x = x/x.sum()
+    x = x / x.sum()
     x[-1] = label
 
     return x
+
 
 N = len(positive_tokens) + len(negative_tokens)
 data = np.zeros((N, len(word_index_map) + 1))
@@ -72,12 +78,12 @@ data = np.zeros((N, len(word_index_map) + 1))
 i = 0
 for tokens in positive_tokens:
     xy = tokens2vector(tokens, 1)
-    data[i,:] = xy
+    data[i, :] = xy
     i += 1
 
 for tokens in negative_tokens:
     xy = tokens2vector(tokens, 0)
-    data[i,:] = xy
+    data[i, :] = xy
     i += 1
 
 np.random.shuffle(data)
@@ -90,10 +96,18 @@ Y = data[:, -1]
 # X_test, y_test = X[-batch_test:,], Y[-batch_test:,]
 
 # last 100 rows will be test
-Xtrain = X[:-100,]
-Ytrain = Y[:-100,]
-Xtest = X[-100:,]
-Ytest = Y[-100:,]
+Xtrain = X[
+    :-100,
+]
+Ytrain = Y[
+    :-100,
+]
+Xtest = X[
+    -100:,
+]
+Ytest = Y[
+    -100:,
+]
 
 model = LogisticRegression()
 model.fit(Xtrain, Ytrain)
